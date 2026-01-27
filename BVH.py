@@ -148,7 +148,7 @@ def load(filename, start=None, end=None, order=None, world=True):
             active = (len(parents) - 1)
             end_site_joints = np.append(end_site_joints, active)
             end_site_is_joint = True
-            end_site_match = re.match(".*#\s*name\s*:\s*(\w+).*", line)
+            end_site_match = re.match(".*#\s*name\s*:\s*(\S+).*", line)
             if end_site_match:
                 names.append(end_site_match.group(1))
             else:
@@ -204,29 +204,29 @@ def load(filename, start=None, end=None, order=None, world=True):
     rotations = rotations[..., ::-1]
     quat_rotations = Quaternions.from_euler(np.radians(rotations), order=order, world=world)
     # added for handling truebones common problem of redundant root joint
-    if np.isclose(offsets[1], 0).all():
-        if len(parents[parents == 1]) == 0: # redundant joint #1, just remove
-            offsets[1] = offsets[0]
-            offsets = offsets[1:]
-            quat_rotations[:, 1] = quat_rotations[:, 0]
-            quat_rotations = quat_rotations[:, 1:]
-            positions[:, 1] = positions[:, 0]
-            positions = positions[:, 1:]
-            orients = orients[1:]
-            parents = parents[1:] - 1
-            parents[1:][parents[1:] < 0] = 0
-            names[1] = names[0]
-            names = names[1:]
-        elif len(parents[parents == 0]) == 1: # remove root joint by composing rots, adding pos & offs
-            offsets[1] = offsets[0]
-            offsets=offsets[1:]
-            quat_rotations[:, 1] = quat_rotations[:, 0] * quat_rotations[:, 1]
-            quat_rotations = quat_rotations[:, 1: ]
-            positions[:, 1] = positions[:, 0] + positions[:, 1]
-            positions = positions[:, 1:]
-            orients = orients[1:]
-            parents = parents[1:] - 1
-            names = names[1:]
+    # if np.isclose(offsets[1], 0).all():
+    #     if len(parents[parents == 1]) == 0: # redundant joint #1, just remove
+    #         offsets[1] = offsets[0]
+    #         offsets = offsets[1:]
+    #         quat_rotations[:, 1] = quat_rotations[:, 0]
+    #         quat_rotations = quat_rotations[:, 1:]
+    #         positions[:, 1] = positions[:, 0]
+    #         positions = positions[:, 1:]
+    #         orients = orients[1:]
+    #         parents = parents[1:] - 1
+    #         parents[1:][parents[1:] < 0] = 0
+    #         names[1] = names[0]
+    #         names = names[1:]
+    #     elif len(parents[parents == 0]) == 1: # remove root joint by composing rots, adding pos & offs
+    #         offsets[1] = offsets[0]
+    #         offsets=offsets[1:]
+    #         quat_rotations[:, 1] = quat_rotations[:, 0] * quat_rotations[:, 1]
+    #         quat_rotations = quat_rotations[:, 1: ]
+    #         positions[:, 1] = positions[:, 0] + positions[:, 1]
+    #         positions = positions[:, 1:]
+    #         orients = orients[1:]
+    #         parents = parents[1:] - 1
+    #         names = names[1:]
 
 
     return (Animation(quat_rotations, positions, orients, offsets, parents), names, frametime)
