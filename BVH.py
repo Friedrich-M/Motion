@@ -150,7 +150,7 @@ def load(filename, start=None, end=None, order=None, world=True):
             end_site_is_joint = True
             end_site_match = re.match(".*#\s*name\s*:\s*(\S+).*", line)
             if end_site_match:
-                names.append(end_site_match.group(1))
+                names.append('{}_end_site'.format(end_site_match.group(1)))
             else:
                 names.append('{}_end_site'.format(names[parents[active]]))
             continue
