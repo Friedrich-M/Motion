@@ -107,16 +107,16 @@ def load(filename, start=None, end=None, order=None, world=True):
         offmatch = re.match(r"\s*OFFSET\s+([\-\d\.e]+)\s+([\-\d\.e]+)\s+([\-\d\.e]+)", line)
         if offmatch:
             offsets[active] = np.array([list(map(float, offmatch.groups()))])
-            if end_site and all(offsets[active]==0):
-                # an end site of offset zero is not considered a joint
-                names = names[:-1]
-                offsets = offsets[:-1]
-                orients.qs = orients.qs[:-1]
-                active = parents[active]
-                parents = parents[:-1]
-                end_site_joints = end_site_joints[:-1]
-                end_site_is_joint = False
-            continue
+            # if end_site and all(offsets[active]==0):
+            #     # an end site of offset zero is not considered a joint
+            #     names = names[:-1]
+            #     offsets = offsets[:-1]
+            #     orients.qs = orients.qs[:-1]
+            #     active = parents[active]
+            #     parents = parents[:-1]
+            #     end_site_joints = end_site_joints[:-1]
+            #     end_site_is_joint = False
+            # continue
            
         chanmatch = re.match(r"\s*CHANNELS\s+(\d+)", line)
         if chanmatch:
@@ -150,7 +150,7 @@ def load(filename, start=None, end=None, order=None, world=True):
             end_site_is_joint = True
             end_site_match = re.match(".*#\s*name\s*:\s*(\S+).*", line)
             if end_site_match:
-                names.append('{}_end_site'.format(end_site_match.group(1)))
+                names.append(end_site_match.group(1))
             else:
                 names.append('{}_end_site'.format(names[parents[active]]))
             continue
